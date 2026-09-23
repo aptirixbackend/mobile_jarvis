@@ -41,7 +41,9 @@ class PhoneControlService {
 
   void _connect() {
     try {
-      _ws = WebSocketChannel.connect(Uri.parse(_wsUrl));
+      const token = String.fromEnvironment('NOVA_API_TOKEN', defaultValue: '');
+      final url = token.isEmpty ? _wsUrl : '$_wsUrl?token=$token';
+      _ws = WebSocketChannel.connect(Uri.parse(url));
       _sub = _ws!.stream.listen(
         _onMessage,
         onError: (_) => _scheduleReconnect(),

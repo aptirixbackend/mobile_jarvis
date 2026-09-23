@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 from app.core.phone_manager import phone_manager
 
@@ -7,6 +9,14 @@ router = APIRouter()
 @router.websocket("/ws")
 async def phone_ws(ws: WebSocket):
     """Persistent WebSocket connection from the Android phone."""
+    # HTTP middleware never sees websockets, so the shared token is checked
+    # here as well — this socket can drive the phone, so it must not be open.
+    token = os.getenv("NOVA_API_TOKEN", "")
+    if token:
+        sent = ws.query_params.get("token") or ws.headers.get("x-nova-token", "")
+        if sent != token:
+            await ws.close(code=4401)          # unauthorised
+            return
     await phone_manager.connect(ws)
     try:
         while True:

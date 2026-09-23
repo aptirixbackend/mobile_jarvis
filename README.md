@@ -48,6 +48,23 @@ front of it (ngrok or similar) and set that URL in
 `mobile/lib/core/api/nova_client.dart` and
 `mobile/lib/core/services/phone_control_service.dart`.
 
+## Deploying to Cloud Run
+
+```bash
+gcloud config set project YOUR_PROJECT_ID
+bash deploy/gcp-deploy.sh                # build, secrets, deploy — run again to ship updates
+```
+
+The script enables the APIs, stores the keys from `backend/.env` in Secret
+Manager, creates a bucket, builds with Cloud Build and deploys to
+`asia-south1` with one always-warm instance. It prints the service URL, a
+generated API token, and the two constants to set in the app.
+
+Cloud Run resets the disk on every restart, so `state_sync.py` restores
+`nova.db` from the bucket on boot and copies it back every few minutes — the
+conversation history and token counts survive restarts without a database
+migration.
+
 ## Permissions the phone needs
 
 | Permission | Why |

@@ -12,8 +12,14 @@ class NovaClient {
   // ngrok tunnel    → https://<id>.ngrok-free.app/api
   static const String baseUrl = 'https://d23e-223-178-85-116.ngrok-free.app/api';
 
+  /// Shared token — must match NOVA_API_TOKEN on the server. The Cloud Run
+  /// URL is public, so without this anyone who finds it can spend your quota.
+  static const String apiToken = String.fromEnvironment('NOVA_API_TOKEN',
+      defaultValue: '');
+
   final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
+    headers: apiToken.isEmpty ? null : {'X-Nova-Token': apiToken},
     connectTimeout: const Duration(seconds: 15),
     receiveTimeout: const Duration(seconds: 60),
   ));
