@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jarvis</string>
+    <string name="accessibility_service_description">Jarvis phone control — allows the AI to perform actions on your phone such as opening apps, tapping, typing, and taking screenshots on your behalf.</string>
+</resources>
